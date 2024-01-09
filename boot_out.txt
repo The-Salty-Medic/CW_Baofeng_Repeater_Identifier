@@ -1,0 +1,3 @@
+Adafruit CircuitPython 8.2.9 on 2023-12-06; VCC-GND Studio YD RP2040 with rp2040
+Board ID:vcc_gnd_yd_rp2040
+UID:E469BCA5873C1D30
