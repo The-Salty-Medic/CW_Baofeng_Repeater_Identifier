@@ -21,7 +21,7 @@ Polite_CW_Delay = 120 # waiting for a pause in the conversation, up to 2 minute,
 Max_Long_Delay = 900 # maximum long delay of 15 minutes for GMRS compliance, set to 600 for Ham
 Min_Long_Delay = Max_Long_Delay - Polite_CW_Delay  # so we can transmit between the two timelines.
 Audio_Input_Threshold = 20000 # When radio is on, usually rests at zero, audio is usually 50k+
-Your_FCC_Call_Sign = "WRXJ407" # put your information here
+Your_FCC_Call_Sign = "your call sign here" # put your information here
 Your_FCC_Call_Sign = Your_FCC_Call_Sign.upper()
 
 # mutable parameters
