@@ -7,8 +7,7 @@ import board, digitalio, analogio, time, neopixel_write, pwmio, busio, adafruit_
 print("\nThe model of this board is :  " + board.board_id)           
 
 # begin constant parameters
-CW_Word_Per_Minute = 15
-# sets pace for all subsequent tone output
+CW_Word_Per_Minute = 20 # sets pace for all subsequent tone output
 paris_to_dit = 50
 minute_to_second = 60
 Dit_time = minute_to_second / (CW_Word_Per_Minute * paris_to_dit)
@@ -21,8 +20,7 @@ Polite_CW_Delay = 120 # waiting for a pause in the conversation, up to 2 minute,
 Max_Long_Delay = 900 # maximum long delay of 15 minutes for GMRS compliance, set to 600 for Ham
 Min_Long_Delay = Max_Long_Delay - Polite_CW_Delay  # so we can transmit between the two timelines.
 Audio_Input_Threshold = 20000 # When radio is on, usually rests at zero, audio is usually 50k+
-Your_FCC_Call_Sign = "your call sign here" # put your information here
-Your_FCC_Call_Sign = Your_FCC_Call_Sign.upper()
+Your_FCC_Call_Sign = "Your Call Sign Here" # put your information here
 
 # mutable parameters
 System_Status = 0 # tracking this as we go for visual display
@@ -190,25 +188,25 @@ for i in range(len(Standard_AlphaNumeric_List) ):
 print("\n In CW, your callsign translates as:")
 print(Encoded_FCC_Call_Sign) # and after
 
-while True:
-    if USRkey.value == False:
-        neopixel_write.neopixel_write(np, neopixel_blue)
-        time.sleep(0.25)
-        neopixel_write.neopixel_write(np, neopixel_red)
-        time.sleep(0.25)
-        neopixel_write.neopixel_write(np, neopixel_green)
-        time.sleep(0.25)
-        neopixel_write.neopixel_write(np, neopixel_white)
-        time.sleep(0.25)
-        neopixel_write.neopixel_write(np, neopixel_off)
-    else:
-        neopixel_write.neopixel_write(np, neopixel_off)
-        led.duty_cycle = 2 ** 15
-        time.sleep(0.5)
-        PTT_Output.value = True
-        led.duty_cycle = 2 ** 11
-        time.sleep(0.5)
-        PTT_Output.value = False
+# while True:
+#     if USRkey.value == False:
+#         neopixel_write.neopixel_write(np, neopixel_blue)
+#         time.sleep(0.25)
+#         neopixel_write.neopixel_write(np, neopixel_red)
+#         time.sleep(0.25)
+#         neopixel_write.neopixel_write(np, neopixel_green)
+#         time.sleep(0.25)
+#         neopixel_write.neopixel_write(np, neopixel_white)
+#         time.sleep(0.25)
+#         neopixel_write.neopixel_write(np, neopixel_off)
+#     else:
+#         neopixel_write.neopixel_write(np, neopixel_off)
+#         led.duty_cycle = 2 ** 15
+#         time.sleep(0.5)
+#         PTT_Output.value = True
+#         led.duty_cycle = 2 ** 11
+#         time.sleep(0.5)
+#         PTT_Output.value = False
 
 # Main Loop
 while True:
@@ -323,13 +321,21 @@ while True:
         PTT_Output.value = True
         
         # give bit, It does take the full 0.4 to make it happen without skipping anything.
-        time.sleep(0.4)
+        time.sleep(0.3)
         
         # for each character in the encoded call sign
         for i in range(len(Encoded_FCC_Call_Sign) ):
             
+            # pause between characters
+            # Character - Tone time because each tone incorporates a tone gap time already
+            time.sleep(Character_Gap_time - Tone_Gap_Time)
+            # total 2 units
+            
             # for each sound in each character
             for j in Encoded_FCC_Call_Sign[i]:
+                
+                time.sleep(Tone_Gap_Time)
+                # total 1 unit
                 
                 if j == ".":
                     # dit using neopixel for visual and audio output
@@ -338,7 +344,7 @@ while True:
                     time.sleep(Dit_time)
                     neopixel_write.neopixel_write(np, neopixel_off)
                     Audio_Output.duty_cycle = 0
-                    time.sleep(Tone_Gap_Time)
+#                     time.sleep(Tone_Gap_Time)
                     print("dit")
                 
                 if j == "-":
@@ -348,12 +354,13 @@ while True:
                     time.sleep(Dah_time)
                     neopixel_write.neopixel_write(np, neopixel_off)
                     Audio_Output.duty_cycle = 0
-                    time.sleep(Tone_Gap_Time)
+#                     time.sleep(Tone_Gap_Time)
                     print("dah")
                 
                 if j == " ":
                     # pause for the space
-                    time.sleep(Space_time)
+                    time.sleep(Space_time - ( Character_Gap_time + Tone_Gap_Time ) )
+                    # total 4 units
                     print("space")
                 
         # little pause after sending
